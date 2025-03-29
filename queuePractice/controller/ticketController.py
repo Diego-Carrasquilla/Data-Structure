@@ -8,8 +8,12 @@ class TicketController:
     def is_empty(self) -> bool:
         return self.head == None
     
-    def enqueue(self, ticket: Ticket) -> None:
-        node = Node(ticket, ticket.priority)
+    def enqueue(self, ticket: Ticket, priority: int = None) -> None:
+        # Si la prioridad no se especifica, usar la del ticket
+        if priority is None:
+            priority = 1 if ticket.priority_attention else 0
+        
+        node = Node(ticket, priority)
         if self.is_empty():
             self.head = node
         else:
@@ -18,7 +22,7 @@ class TicketController:
                 node.next = current
                 self.head = node
             else:
-                while current.next != None and current.next.priority > node.priority:
+                while current.next != None and current.next.priority >= node.priority:
                     current = current.next
                 node.next = current.next
                 current.next = node
@@ -37,9 +41,17 @@ class TicketController:
         else:
             return self.head.data
     
+    def get_all_tickets(self) -> list:
+        tickets = []
+        current = self.head
+        while current is not None:
+            tickets.append(current.data)
+            current = current.next
+        return tickets
+    
     def print_queue(self) -> None:
         current = self.head
         while current != None:
-            print(f"Turno: {current.data.turno}, Prioridad: {current.priority}")
+            print(f"Name: {current.data.name}, Priority: {current.priority}")
             current = current.next
-        print("Fin de la cola")
+        print("End of queue")

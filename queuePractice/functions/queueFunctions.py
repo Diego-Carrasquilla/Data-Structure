@@ -3,12 +3,20 @@ from controller.ticketController import TicketController
 
 def add_queue(ticket: Ticket, ticketTypes: dict) -> None:
     """
-    Add a ticket to the queue, using the TicketController class to manage the queue.
-    you need order the tickets by type and priority. (dudas, asesor, caja, otros)
+    Add a ticket to the queue based on its type and priority
     """
-    print("Añadir ticket a la cola")
-    turno = input("Turno: ")
-    prioridad = input("Prioridad: ")
-    ticket = Ticket(turno, prioridad)
-    ticketController.enqueue(ticket)
-    print("Ticket añadido a la cola")
+    # Get the ticket type
+    ticket_type = ticket.type.lower()
+    
+    # Check if ticket type exists, default to "otros" if not
+    if ticket_type not in ticketTypes:
+        ticket_type = "otros"
+    
+    # Asignar prioridad automáticamente a mayores de 60 años
+    # incluso si no lo solicitan explícitamente
+    priority = 1 if (ticket.priority_attention or ticket.age > 60) else 0
+    
+    # Add ticket to the appropriate queue
+    ticketTypes[ticket_type].enqueue(ticket, priority)
+    
+    return None
